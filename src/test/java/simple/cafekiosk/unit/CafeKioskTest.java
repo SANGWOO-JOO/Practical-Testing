@@ -7,6 +7,8 @@ import simple.cafekiosk.unit.beverage.Latte;
 import simple.cafekiosk.unit.order.Order;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -102,6 +104,36 @@ class CafeKioskTest {
 
         //then
         assertThat(totalPrice).isEqualTo(8500);
+    }
+
+    @Test
+    void calculateAscName() {
+        //given 어떤 환경에서
+        CafeKiosk cafeKiosk = new CafeKiosk();
+        Americano americano = new Americano();
+        Latte latte = new Latte();
+        //when 어떤 행동을 진행했을 때
+        cafeKiosk.add(americano);
+        cafeKiosk.add(latte);
+        //then 어떤 상태 변화가 일어난다.
+        Optional<String> ascBeverageName = cafeKiosk.calculateAscName();
+        assertEquals("라떼",ascBeverageName.orElseThrow(()->new NoSuchElementException("실패")));
+
+    }
+
+    @Test
+    void falseCalculateAscName() {
+        //given 어떤 환경에서
+        CafeKiosk cafeKiosk = new CafeKiosk();
+        Americano americano = new Americano();
+        Latte latte = new Latte();
+        //when 어떤 행동을 진행했을 때
+        cafeKiosk.add(americano);
+        cafeKiosk.add(latte);
+        //then 어떤 상태 변화가 일어난다.
+        Optional<String> ascBeverageName = cafeKiosk.calculateAscName();
+        assertEquals("아메리카노",ascBeverageName.orElseThrow(()->new NoSuchElementException("실패")));
+
     }
 
     @Test

@@ -4,10 +4,11 @@ import lombok.Getter;
 import simple.cafekiosk.unit.beverage.Beverage;
 import simple.cafekiosk.unit.order.Order;
 
+import java.text.Collator;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class CafeKiosk {
@@ -23,7 +24,6 @@ public class CafeKiosk {
     public void add(Beverage beverage, int count) {
         if(count<=0){
             throw new IllegalArgumentException("음료는 1잔 이상 주문하실 수 있습니다.");
-
         }
 
         for (int i = 0; i < count; i++) {
@@ -38,30 +38,24 @@ public class CafeKiosk {
         beverages.clear();
     }
 
-//    public int calculateTotalPrice() {
-//        int totalPrice =0;
-//        for (Beverage beverage : beverages) {
-//            totalPrice += beverage.getPrice();
-//        }
-//        return totalPrice;
-
-//    }
-//    public int calculateTotalPrice() {
-//        int totalPrice=0;
-//        for (Beverage beverage : beverages) {
-//            totalPrice+=beverage.getPrice();
-//        }
-//        return totalPrice;
-//    }
     public int calculateTotalPrice() {
         return beverages.stream()
                 .mapToInt(Beverage::getPrice)
                 .sum();
     }
 
+    public Optional<String> calculateAscName(){
+
+        Collator collator = Collator.getInstance(Locale.KOREAN);
+
+        return beverages.stream()
+                .sorted((b1,b2) -> collator.compare(b1.getName(),b2.getName()))
+                .map(beverage -> beverage.getName())
+                .findFirst();
+    }
+
 
     public Order createOrder(LocalDateTime currentDateTime){
-//        LocalDateTime currentDateTime = LocalDateTime.now();
         LocalTime currentTime = currentDateTime.toLocalTime();
         if(currentTime.isBefore(SHOP_OPEN_TIME) || currentTime.isAfter(SHOP_CLOSE_TIME)){
             throw new IllegalArgumentException("주문 시간이 아닙니다. 관리자에게 문의하세요.");
